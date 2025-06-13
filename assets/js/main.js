@@ -226,8 +226,8 @@ class FacilityBookingApp {
     }
     
     initCalendar() {
-        const calendar = document.getElementById('calendar');
-        if (!calendar) return;
+        const calendarGrid = document.getElementById('calendarGrid');
+        if (!calendarGrid) return;
         
         this.currentCalendarDate = new Date();
         this.displayCalendar(this.currentCalendarDate);
@@ -238,8 +238,20 @@ class FacilityBookingApp {
         
         if (prevMonthBtn) {
             prevMonthBtn.addEventListener('click', () => {
-                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
-                this.displayCalendar(this.currentCalendarDate);
+                const currentYear = new Date().getFullYear();
+                const currentMonth = new Date().getMonth();
+                const prevMonth = new Date(this.currentCalendarDate);
+                prevMonth.setMonth(prevMonth.getMonth() - 1);
+                
+                // 現在月より前には戻れない
+                if (prevMonth.getFullYear() > currentYear || 
+                    (prevMonth.getFullYear() === currentYear && prevMonth.getMonth() >= currentMonth)) {
+                    this.currentCalendarDate = prevMonth;
+                    this.displayCalendar(this.currentCalendarDate);
+                }
+                
+                // ボタンの状態を更新
+                this.updateNavigationButtons();
             });
         }
         
@@ -247,8 +259,12 @@ class FacilityBookingApp {
             nextMonthBtn.addEventListener('click', () => {
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
                 this.displayCalendar(this.currentCalendarDate);
+                this.updateNavigationButtons();
             });
         }
+        
+        // 初期状態でボタンの状態を設定
+        this.updateNavigationButtons();
     }
     
     displayCalendar(date) {
@@ -256,6 +272,18 @@ class FacilityBookingApp {
         const calendarGrid = document.getElementById('calendarGrid');
         
         if (!monthYear || !calendarGrid) return;
+        
+        // 現在の年月を正確に表示
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth();
+        
+        // 表示する年月を設定（現在月より前には戻れない）
+        if (date.getFullYear() < currentYear || 
+            (date.getFullYear() === currentYear && date.getMonth() < currentMonth)) {
+            date.setFullYear(currentYear);
+            date.setMonth(currentMonth);
+            this.currentCalendarDate = new Date(date);
+        }
         
         const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
         monthYear.textContent = `${date.getFullYear()}年 ${months[date.getMonth()]}`;
@@ -287,23 +315,30 @@ class FacilityBookingApp {
             dayElement.className = 'calendar-day';
             dayElement.textContent = currentDay.getDate();
             
-            // Past dates or different month
-            if (currentDay < today || currentDay.getMonth() !== date.getMonth()) {
+            // 過去の日付または他月の日付
+            if (currentDay < today) {
                 dayElement.classList.add('unavailable');
-                if (currentDay.getMonth() !== date.getMonth()) {
-                    dayElement.style.opacity = '0.3';
-                }
+                dayElement.style.opacity = '0.5';
+            } else if (currentDay.getMonth() !== date.getMonth()) {
+                dayElement.classList.add('unavailable');
+                dayElement.style.opacity = '0.3';
             } else {
-                // Future dates in current month
+                // 今日以降の当月の日付
                 dayElement.addEventListener('click', () => {
                     this.selectDate(currentDay);
                 });
                 
-                // Check availability (mock data - available on odd days)
+                // 空き状況をチェック（模擬データ - 奇数日は空きあり）
                 if (this.isDateAvailable(currentDay)) {
                     dayElement.classList.add('available');
                 } else {
                     dayElement.classList.add('unavailable');
+                }
+                
+                // 今日の日付をハイライト
+                if (currentDay.getTime() === today.getTime()) {
+                    dayElement.style.border = '2px solid #fbbf24';
+                    dayElement.style.fontWeight = 'bold';
                 }
             }
             
@@ -314,6 +349,26 @@ class FacilityBookingApp {
     isDateAvailable(date) {
         // Mock availability check
         return date.getDate() % 2 === 1 && date >= new Date();
+    }
+    
+    updateNavigationButtons() {
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth();
+        
+        if (prevMonthBtn) {
+            // 現在月の場合は前月ボタンを無効化
+            if (this.currentCalendarDate.getFullYear() === currentYear && 
+                this.currentCalendarDate.getMonth() === currentMonth) {
+                prevMonthBtn.disabled = true;
+                prevMonthBtn.style.opacity = '0.5';
+                prevMonthBtn.style.cursor = 'not-allowed';
+            } else {
+                prevMonthBtn.disabled = false;
+                prevMonthBtn.style.opacity = '1';
+                prevMonthBtn.style.cursor = 'pointer';
+            }
+        }
     }
     
     selectDate(date) {

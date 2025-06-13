@@ -268,10 +268,25 @@
                         <!-- JavaScriptで動的に生成 -->
                     </div>
                 </div>
-                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--neutral-color);">
-                    <span style="color: var(--secondary-color);">■</span> 空きあり　
-                    <span style="color: var(--neutral-color);">■</span> 満室　
-                    <span style="color: var(--primary-color);">■</span> 選択中
+                <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 0.5rem; backdrop-filter: blur(10px);">
+                    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; font-size: 0.9rem; color: white; font-weight: 600;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 12px; height: 12px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);"></div>
+                            <span>空きあり</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 12px; height: 12px; background: rgba(255,255,255,0.3); border-radius: 50%;"></div>
+                            <span>満室</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 12px; height: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);"></div>
+                            <span>選択中</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 12px; height: 12px; background: rgba(255,255,255,0.2); border: 2px solid #fbbf24; border-radius: 50%;"></div>
+                            <span>本日</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -331,20 +346,55 @@
                 return;
             }
             
-            // 料金表の更新
+            // アプリケーションの初期化
+            const facilityApp = new FacilityBookingApp();
+            window.facilityApp = facilityApp;
+            
+            // 施設詳細とカレンダーの初期化
             setTimeout(() => {
-                const facilityApp = window.facilityApp;
                 if (facilityApp && facilityApp.facilities) {
                     const facility = facilityApp.facilities.find(f => f.id == facilityId);
                     if (facility) {
+                        // 施設情報の表示
+                        document.getElementById('facilityNameTitle').textContent = facility.name;
+                        document.getElementById('facilityName').textContent = facility.name;
+                        document.getElementById('facilityDescription').textContent = facility.description;
+                        document.getElementById('facilityAddress').textContent = facility.address;
+                        document.getElementById('facilityPhone').textContent = facility.phone || '03-1234-5678';
+                        document.getElementById('facilityCapacity').textContent = `${facility.capacity}名`;
+                        document.getElementById('facilityPrice').textContent = `¥${facility.basePrice.toLocaleString()}～`;
+                        
+                        // 料金表の更新
                         document.getElementById('morningPrice').textContent = `¥${facility.basePrice.toLocaleString()}`;
                         document.getElementById('afternoonPrice').textContent = `¥${Math.round(facility.basePrice * 1.2).toLocaleString()}`;
                         document.getElementById('eveningPrice').textContent = `¥${Math.round(facility.basePrice * 1.5).toLocaleString()}`;
-                        document.getElementById('facilityNameTitle').textContent = facility.name;
-                        document.getElementById('facilityCapacity').textContent = `${facility.capacity}名`;
+                        
+                        // 施設画像の設定
+                        const facilityImage = document.getElementById('facilityImage');
+                        if (facilityImage) {
+                            facilityImage.src = facility.image || '';
+                            facilityImage.alt = facility.name;
+                        }
+                        
+                        // 設備リストの表示
+                        const equipmentList = document.getElementById('equipmentList');
+                        if (equipmentList && facility.equipment) {
+                            equipmentList.innerHTML = facility.equipment.map(item => `<li>${item}</li>`).join('');
+                        }
+                        
+                        // 利用規則の表示
+                        const rulesList = document.getElementById('rulesList');
+                        if (rulesList && facility.rules) {
+                            rulesList.innerHTML = facility.rules.map(rule => `<li>${rule}</li>`).join('');
+                        }
                     }
                 }
-            }, 200);
+                
+                // カレンダーの手動初期化
+                if (facilityApp && facilityApp.initCalendar) {
+                    facilityApp.initCalendar();
+                }
+            }, 500);
         });
     </script>
 </body>
