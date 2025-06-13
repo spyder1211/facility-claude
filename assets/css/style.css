@@ -537,18 +537,15 @@ p {
     opacity: 0.8;
 }
 
-.time-slot:hover {
+.time-slot:hover:not(.unavailable) {
     transform: translateY(-4px) scale(1.05);
     border-color: var(--primary-color);
     box-shadow: 0 12px 30px rgba(37, 99, 235, 0.3);
-}
-
-.time-slot:hover::before {
-    left: 0;
-}
-
-.time-slot:hover {
     color: white;
+}
+
+.time-slot:hover:not(.unavailable)::before {
+    left: 0;
 }
 
 .time-slot.selected {

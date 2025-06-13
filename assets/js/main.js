@@ -229,8 +229,8 @@ class FacilityBookingApp {
         const calendar = document.getElementById('calendar');
         if (!calendar) return;
         
-        const currentDate = new Date();
-        this.displayCalendar(currentDate);
+        this.currentCalendarDate = new Date();
+        this.displayCalendar(this.currentCalendarDate);
         
         // Month navigation
         const prevMonthBtn = document.getElementById('prevMonth');
@@ -238,15 +238,15 @@ class FacilityBookingApp {
         
         if (prevMonthBtn) {
             prevMonthBtn.addEventListener('click', () => {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                this.displayCalendar(currentDate);
+                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
+                this.displayCalendar(this.currentCalendarDate);
             });
         }
         
         if (nextMonthBtn) {
             nextMonthBtn.addEventListener('click', () => {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                this.displayCalendar(currentDate);
+                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
+                this.displayCalendar(this.currentCalendarDate);
             });
         }
     }
@@ -339,6 +339,9 @@ class FacilityBookingApp {
         const timeSlotContainer = document.getElementById('timeSlots');
         if (!timeSlotContainer) return;
         
+        // Clear existing slots
+        timeSlotContainer.innerHTML = '';
+        
         this.timeSlots.forEach(slot => {
             const slotElement = document.createElement('div');
             slotElement.className = 'time-slot';
@@ -346,8 +349,8 @@ class FacilityBookingApp {
             slotElement.dataset.slotId = slot.id;
             slotElement.dataset.price = slot.price;
             
-            // Mock availability
-            if (Math.random() > 0.3) {
+            // Mock availability - make most slots available
+            if (Math.random() > 0.2) {
                 slotElement.addEventListener('click', () => {
                     this.toggleTimeSlot(slotElement);
                 });
