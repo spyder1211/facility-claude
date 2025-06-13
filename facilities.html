@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>施設一覧 - 体育施設予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏃‍♂️ スポーツ施設予約</a>
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="facilities.html">施設一覧</a>
+                    <a href="login.html" class="login-btn">ログイン</a>
+                </nav>
+                <button class="mobile-menu-toggle">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a>
+                <span class="breadcrumb-separator">></span>
+                <span>施設一覧</span>
+            </nav>
+
+            <h1>施設一覧</h1>
+
+            <!-- 検索・フィルター -->
+            <div class="filter-bar">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="keyword" class="form-label">キーワード</label>
+                        <input type="text" id="keyword" class="form-input" placeholder="施設名や設備で検索">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoryFilter" class="form-label">カテゴリ</label>
+                        <select id="categoryFilter" class="form-select">
+                            <option value="">すべてのカテゴリ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="areaFilter" class="form-label">エリア</label>
+                        <select id="areaFilter" class="form-select">
+                            <option value="">すべてのエリア</option>
+                            <option value="千代田区">千代田区</option>
+                            <option value="中央区">中央区</option>
+                            <option value="港区">港区</option>
+                            <option value="新宿区">新宿区</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="utilDate" class="form-label">利用日</label>
+                        <input type="date" id="utilDate" class="form-input" min="">
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 1rem;">
+                    <button id="searchBtn" class="btn btn-primary">検索</button>
+                    <button id="resetBtn" class="btn btn-outline" style="margin-left: 1rem;">リセット</button>
+                </div>
+            </div>
+
+            <!-- 施設一覧 -->
+            <div class="grid grid-3" id="facilityList">
+                <!-- JavaScriptで動的に生成 -->
+            </div>
+
+            <!-- ページネーション -->
+            <div class="pagination">
+                <a href="#" class="pagination-prev">前へ</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#" class="pagination-next">次へ</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>サービス案内</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="facilities.html">施設一覧</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">料金表</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">利用規約</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p>📞 03-1234-5678</p>
+                    <p>📧 info@sports-booking.city</p>
+                    <p>📍 〒100-0001<br>東京都千代田区千代田1-1-1</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>営業時間</h3>
+                    <p><strong>システム:</strong> 24時間利用可能</p>
+                    <p><strong>電話受付:</strong><br>平日 9:00-17:00</p>
+                    <p><strong>施設利用:</strong><br>各施設により異なります</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 体育施設予約システム. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // URLパラメータからカテゴリを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            
+            if (category) {
+                // カテゴリフィルターを設定
+                setTimeout(() => {
+                    const categoryFilter = document.getElementById('categoryFilter');
+                    if (categoryFilter) {
+                        categoryFilter.value = category;
+                        // フィルターを適用
+                        window.facilityApp.filterFacilities();
+                    }
+                }, 200);
+            }
+            
+            // 今日の日付を設定
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('utilDate').min = today;
+            
+            // リセットボタン
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                document.getElementById('keyword').value = '';
+                document.getElementById('categoryFilter').value = '';
+                document.getElementById('areaFilter').value = '';
+                document.getElementById('utilDate').value = '';
+                window.facilityApp.displayFacilities(window.facilityApp.facilities);
+            });
+            
+            // Enterキーで検索
+            document.getElementById('keyword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    window.facilityApp.filterFacilities();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

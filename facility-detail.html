@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>施設詳細 - 体育施設予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .facility-gallery {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .facility-main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+        }
+        
+        .facility-info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .facility-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .info-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .info-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: var(--neutral-color);
+        }
+        
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .price-table th,
+        .price-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .price-table th {
+            background: var(--light-gray);
+            font-weight: 500;
+        }
+        
+        .equipment-list,
+        .rules-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .equipment-list li,
+        .rules-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .equipment-list li:last-child,
+        .rules-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .equipment-list li:before {
+            content: "✓ ";
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .rules-list li:before {
+            content: "• ";
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .calendar-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .booking-button {
+            position: sticky;
+            bottom: 2rem;
+            text-align: center;
+        }
+        
+        .booking-button .btn {
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏃‍♂️ スポーツ施設予約</a>
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="facilities.html">施設一覧</a>
+                    <a href="login.html" class="login-btn">ログイン</a>
+                </nav>
+                <button class="mobile-menu-toggle">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a>
+                <span class="breadcrumb-separator">></span>
+                <a href="facilities.html">施設一覧</a>
+                <span class="breadcrumb-separator">></span>
+                <span id="facilityName">施設詳細</span>
+            </nav>
+
+            <!-- 施設画像 -->
+            <div class="facility-gallery">
+                <img id="facilityImage" src="" alt="" class="facility-main-image" 
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjZjdmOGY5Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjI0cHgiIGZpbGw9IiM2YjcyODAiPuaWveiomOeUu+WDjzwvdGV4dD48L3N2Zz4='">
+            </div>
+
+            <!-- 施設情報 -->
+            <div class="facility-info-grid">
+                <div>
+                    <div class="info-section">
+                        <h1 id="facilityNameTitle">施設名</h1>
+                        <p id="facilityDescription" class="mb-3">施設の説明</p>
+                        
+                        <div class="info-row">
+                            <span class="info-label">住所</span>
+                            <span id="facilityAddress">-</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">電話番号</span>
+                            <span id="facilityPhone">-</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">収容人数</span>
+                            <span id="facilityCapacity">-</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">基本料金</span>
+                            <span id="facilityPrice">-</span>
+                        </div>
+                    </div>
+
+                    <div class="info-section" style="margin-top: 2rem;">
+                        <h3>設備・備品</h3>
+                        <ul id="equipmentList" class="equipment-list">
+                            <!-- JavaScriptで動的に生成 -->
+                        </ul>
+                    </div>
+
+                    <div class="info-section" style="margin-top: 2rem;">
+                        <h3>利用料金表</h3>
+                        <table class="price-table">
+                            <thead>
+                                <tr>
+                                    <th>時間帯</th>
+                                    <th>料金</th>
+                                    <th>備考</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>9:00-12:00</td>
+                                    <td id="morningPrice">¥2,000</td>
+                                    <td>平日料金</td>
+                                </tr>
+                                <tr>
+                                    <td>12:00-17:00</td>
+                                    <td id="afternoonPrice">¥2,400</td>
+                                    <td>昼間料金</td>
+                                </tr>
+                                <tr>
+                                    <td>17:00-21:00</td>
+                                    <td id="eveningPrice">¥3,000</td>
+                                    <td>夜間料金</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="info-section" style="margin-top: 2rem;">
+                        <h3>利用規則・注意事項</h3>
+                        <ul id="rulesList" class="rules-list">
+                            <!-- JavaScriptで動的に生成 -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="info-section">
+                        <h3>アクセス</h3>
+                        <div style="background: var(--light-gray); height: 200px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: var(--neutral-color); margin-bottom: 1rem;">
+                            地図表示エリア<br>（実装時にGoogle Maps等を埋め込み）
+                        </div>
+                        <p><strong>最寄り駅:</strong> ○○駅より徒歩5分</p>
+                        <p><strong>駐車場:</strong> 20台完備（無料）</p>
+                    </div>
+
+                    <div class="info-section" style="margin-top: 2rem;">
+                        <h3>お問い合わせ</h3>
+                        <p><strong>受付時間:</strong><br>平日 9:00-17:00</p>
+                        <p><strong>休館日:</strong><br>毎週月曜日、年末年始</p>
+                        <p class="mb-0"><strong>緊急連絡先:</strong><br>090-xxxx-xxxx</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 空き状況カレンダー -->
+            <div class="calendar-section">
+                <h3>空き状況カレンダー</h3>
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <button id="prevMonth" class="btn btn-outline">← 前月</button>
+                        <h4 id="monthYear">2024年 1月</h4>
+                        <button id="nextMonth" class="btn btn-outline">次月 →</button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- JavaScriptで動的に生成 -->
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--neutral-color);">
+                    <span style="color: var(--secondary-color);">■</span> 空きあり　
+                    <span style="color: var(--neutral-color);">■</span> 満室　
+                    <span style="color: var(--primary-color);">■</span> 選択中
+                </div>
+            </div>
+
+            <!-- 予約ボタン -->
+            <div class="booking-button">
+                <button id="bookingBtn" class="btn btn-primary" onclick="alert('カレンダーから日付を選択してください')">
+                    この施設を予約する
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>サービス案内</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="facilities.html">施設一覧</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">料金表</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">利用規約</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p>📞 03-1234-5678</p>
+                    <p>📧 info@sports-booking.city</p>
+                    <p>📍 〒100-0001<br>東京都千代田区千代田1-1-1</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>営業時間</h3>
+                    <p><strong>システム:</strong> 24時間利用可能</p>
+                    <p><strong>電話受付:</strong><br>平日 9:00-17:00</p>
+                    <p><strong>施設利用:</strong><br>各施設により異なります</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 体育施設予約システム. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // URLパラメータから施設IDを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const facilityId = urlParams.get('id');
+            
+            if (!facilityId) {
+                alert('施設が見つかりません');
+                window.location.href = 'facilities.html';
+                return;
+            }
+            
+            // 料金表の更新
+            setTimeout(() => {
+                const facilityApp = window.facilityApp;
+                if (facilityApp && facilityApp.facilities) {
+                    const facility = facilityApp.facilities.find(f => f.id == facilityId);
+                    if (facility) {
+                        document.getElementById('morningPrice').textContent = `¥${facility.basePrice.toLocaleString()}`;
+                        document.getElementById('afternoonPrice').textContent = `¥${Math.round(facility.basePrice * 1.2).toLocaleString()}`;
+                        document.getElementById('eveningPrice').textContent = `¥${Math.round(facility.basePrice * 1.5).toLocaleString()}`;
+                        document.getElementById('facilityNameTitle').textContent = facility.name;
+                        document.getElementById('facilityCapacity').textContent = `${facility.capacity}名`;
+                    }
+                }
+            }, 200);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン・会員登録 - 体育施設予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .auth-container {
+            max-width: 500px;
+            margin: 4rem auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            background: var(--light-gray);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .auth-tab.active {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .auth-content {
+            padding: 2rem;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .forgot-password a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏃‍♂️ スポーツ施設予約</a>
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="facilities.html">施設一覧</a>
+                    <a href="login.html">ログイン</a>
+                </nav>
+                <button class="mobile-menu-toggle">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="loginTab">ログイン</button>
+                    <button class="auth-tab" id="registerTab">会員登録</button>
+                </div>
+                
+                <div class="auth-content">
+                    <!-- ログインフォーム -->
+                    <form class="auth-form active" id="loginForm">
+                        <h2 class="text-center mb-3">ログイン</h2>
+                        
+                        <div class="form-group">
+                            <label for="loginEmail" class="form-label">メールアドレス</label>
+                            <input type="email" id="loginEmail" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword" class="form-label">パスワード</label>
+                            <input type="password" id="loginPassword" class="form-input" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-full">ログイン</button>
+                        
+                        <div class="forgot-password">
+                            <a href="#" onclick="alert('パスワードリセット機能は準備中です')">パスワードを忘れた方</a>
+                        </div>
+                    </form>
+                    
+                    <!-- 会員登録フォーム -->
+                    <form class="auth-form" id="registerForm">
+                        <h2 class="text-center mb-3">会員登録</h2>
+                        
+                        <div class="form-group">
+                            <label for="registerName" class="form-label">お名前</label>
+                            <input type="text" id="registerName" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerEmail" class="form-label">メールアドレス</label>
+                            <input type="email" id="registerEmail" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPhone" class="form-label">電話番号</label>
+                            <input type="tel" id="registerPhone" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerAddress" class="form-label">住所</label>
+                            <input type="text" id="registerAddress" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPassword" class="form-label">パスワード</label>
+                            <input type="password" id="registerPassword" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPasswordConfirm" class="form-label">パスワード（確認）</label>
+                            <input type="password" id="registerPasswordConfirm" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" required>
+                                <span>利用規約に同意します</span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-full">会員登録</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>サービス案内</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="facilities.html">施設一覧</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">料金表</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">利用規約</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p>📞 03-1234-5678</p>
+                    <p>📧 info@sports-booking.city</p>
+                    <p>📍 〒100-0001<br>東京都千代田区千代田1-1-1</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>営業時間</h3>
+                    <p><strong>システム:</strong> 24時間利用可能</p>
+                    <p><strong>電話受付:</strong><br>平日 9:00-17:00</p>
+                    <p><strong>施設利用:</strong><br>各施設により異なります</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 体育施設予約システム. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            loginTab.addEventListener('click', function() {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            });
+            
+            registerTab.addEventListener('click', function() {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerForm.classList.add('active');
+                loginForm.classList.remove('active');
+            });
+            
+            // Form validation
+            registerForm.addEventListener('submit', function(e) {
+                const password = document.getElementById('registerPassword').value;
+                const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+                
+                if (password !== passwordConfirm) {
+                    e.preventDefault();
+                    alert('パスワードが一致しません');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予約確認 - 体育施設予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .confirm-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .confirm-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .confirm-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .confirm-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .confirm-item:last-child {
+            border-bottom: none;
+        }
+        
+        .confirm-label {
+            font-weight: 500;
+            color: var(--neutral-color);
+            flex: 0 0 120px;
+        }
+        
+        .confirm-value {
+            flex: 1;
+            text-align: right;
+            font-weight: 500;
+        }
+        
+        .payment-methods {
+            display: grid;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .payment-method input[type="radio"] {
+            margin-right: 1rem;
+        }
+        
+        .payment-info {
+            flex: 1;
+        }
+        
+        .payment-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .payment-description {
+            font-size: 0.9rem;
+            color: var(--neutral-color);
+        }
+        
+        .total-summary {
+            background: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .total-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .total-item:last-child {
+            margin-bottom: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            border-top: 2px solid var(--primary-color);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .terms-agreement {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .terms-agreement input[type="checkbox"] {
+            margin-top: 0.25rem;
+        }
+        
+        .terms-text {
+            flex: 1;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .terms-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .terms-text a:hover {
+            text-decoration: underline;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons .btn {
+                width: 100%;
+            }
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .step.active .step-number {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .step:not(.active):not(.completed) .step-number {
+            background: var(--light-gray);
+            color: var(--neutral-color);
+        }
+        
+        .step-separator {
+            width: 60px;
+            height: 2px;
+            background: var(--border-color);
+            margin: 0 1rem;
+        }
+        
+        .step.completed + .step .step-separator {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏃‍♂️ スポーツ施設予約</a>
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="facilities.html">施設一覧</a>
+                    <a href="login.html" class="login-btn">ログイン</a>
+                </nav>
+                <button class="mobile-menu-toggle">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a>
+                <span class="breadcrumb-separator">></span>
+                <a href="facilities.html">施設一覧</a>
+                <span class="breadcrumb-separator">></span>
+                <span>予約確認</span>
+            </nav>
+
+            <!-- ステップインジケーター -->
+            <div class="step-indicator">
+                <div class="step completed">
+                    <div class="step-number">1</div>
+                    <span>施設選択</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step completed">
+                    <div class="step-number">2</div>
+                    <span>予約内容</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step active">
+                    <div class="step-number">3</div>
+                    <span>確認・決済</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <span>完了</span>
+                </div>
+            </div>
+
+            <div class="confirm-container">
+                <h1>予約内容の確認</h1>
+                
+                <div class="alert alert-warning">
+                    <strong>ご注意:</strong> 内容をよくご確認の上、予約を確定してください。確定後の変更には制限があります。
+                </div>
+
+                <!-- 施設・日時情報 -->
+                <div class="confirm-section">
+                    <h3>🏢 施設・日時情報</h3>
+                    <div class="confirm-item">
+                        <span class="confirm-label">施設名:</span>
+                        <span class="confirm-value" id="confirmFacilityName">市民体育館</span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">利用日:</span>
+                        <span class="confirm-value" id="confirmDate">2024年1月15日（月）</span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">利用時間:</span>
+                        <span class="confirm-value" id="confirmTimeSlots">10:00-12:00</span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">利用目的:</span>
+                        <span class="confirm-value" id="confirmPurpose">個人利用</span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">参加人数:</span>
+                        <span class="confirm-value" id="confirmParticipants">4名</span>
+                    </div>
+                </div>
+
+                <!-- 利用者情報 -->
+                <div class="confirm-section">
+                    <h3>👤 利用者情報</h3>
+                    <div class="confirm-item">
+                        <span class="confirm-label">代表者名:</span>
+                        <span class="confirm-value" id="confirmUserName">田中太郎</span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">電話番号:</span>
+                        <span class="confirm-value" id="confirmUserPhone">090-1234-5678</span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">メール:</span>
+                        <span class="confirm-value" id="confirmUserEmail">tanaka@example.com</span>
+                    </div>
+                </div>
+
+                <!-- 備品・オプション -->
+                <div class="confirm-section">
+                    <h3>🏀 備品・オプション</h3>
+                    <div class="confirm-item">
+                        <span class="confirm-label">レンタル備品:</span>
+                        <span class="confirm-value" id="confirmEquipment">バスケットボール</span>
+                    </div>
+                </div>
+
+                <!-- 料金詳細 -->
+                <div class="confirm-section">
+                    <h3>💰 料金詳細</h3>
+                    <div class="total-summary">
+                        <div class="total-item">
+                            <span>基本料金（2時間）:</span>
+                            <span>¥4,000</span>
+                        </div>
+                        <div class="total-item">
+                            <span>備品レンタル:</span>
+                            <span>¥300</span>
+                        </div>
+                        <div class="total-item">
+                            <span>小計:</span>
+                            <span>¥4,300</span>
+                        </div>
+                        <div class="total-item">
+                            <span>消費税（10%）:</span>
+                            <span>¥430</span>
+                        </div>
+                        <div class="total-item">
+                            <span>合計金額:</span>
+                            <span>¥4,730</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 決済方法選択 -->
+                <div class="confirm-section">
+                    <h3>💳 決済方法選択</h3>
+                    <div class="payment-methods">
+                        <label class="payment-method" for="payment-credit">
+                            <input type="radio" id="payment-credit" name="payment" value="credit" checked>
+                            <div class="payment-info">
+                                <div class="payment-title">クレジットカード</div>
+                                <div class="payment-description">Visa、Mastercard、JCB対応。即座に予約確定します。</div>
+                            </div>
+                        </label>
+                        
+                        <label class="payment-method" for="payment-convenience">
+                            <input type="radio" id="payment-convenience" name="payment" value="convenience">
+                            <div class="payment-info">
+                                <div class="payment-title">コンビニ決済</div>
+                                <div class="payment-description">ローソン、セブンイレブン、ファミリーマートで支払い可能。</div>
+                            </div>
+                        </label>
+                        
+                        <label class="payment-method" for="payment-onsite">
+                            <input type="radio" id="payment-onsite" name="payment" value="onsite">
+                            <div class="payment-info">
+                                <div class="payment-title">現地支払い</div>
+                                <div class="payment-description">施設受付にて現金またはカードでお支払いください。</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 利用規約同意 -->
+                <div class="confirm-section">
+                    <h3>📋 利用規約</h3>
+                    <div class="terms-agreement">
+                        <input type="checkbox" id="termsAgreement" required>
+                        <div class="terms-text">
+                            <a href="#" onclick="alert('利用規約の詳細画面（準備中）')">利用規約</a>、
+                            <a href="#" onclick="alert('プライバシーポリシーの詳細画面（準備中）')">プライバシーポリシー</a>、
+                            <a href="#" onclick="alert('キャンセルポリシーの詳細画面（準備中）')">キャンセルポリシー</a>
+                            に同意します。<br>
+                            <small>※ キャンセル料: 3日前まで無料、前日50%、当日100%</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- アクションボタン -->
+                <div class="action-buttons">
+                    <button type="button" onclick="history.back()" class="btn btn-outline">前の画面に戻る</button>
+                    <button type="button" id="confirmBookingBtn" class="btn btn-primary" onclick="confirmBooking()">
+                        予約を確定する
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>サービス案内</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="facilities.html">施設一覧</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">料金表</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">利用規約</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p>📞 03-1234-5678</p>
+                    <p>📧 info@sports-booking.city</p>
+                    <p>📍 〒100-0001<br>東京都千代田区千代田1-1-1</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>営業時間</h3>
+                    <p><strong>システム:</strong> 24時間利用可能</p>
+                    <p><strong>電話受付:</strong><br>平日 9:00-17:00</p>
+                    <p><strong>施設利用:</strong><br>各施設により異なります</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 体育施設予約システム. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 決済方法の選択処理
+            document.querySelectorAll('input[name="payment"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // 全ての決済方法からselectedクラスを削除
+                    document.querySelectorAll('.payment-method').forEach(method => {
+                        method.classList.remove('selected');
+                    });
+                    
+                    // 選択された決済方法にselectedクラスを追加
+                    this.closest('.payment-method').classList.add('selected');
+                    
+                    // 確認ボタンのテキストを変更
+                    const confirmBtn = document.getElementById('confirmBookingBtn');
+                    if (this.value === 'credit') {
+                        confirmBtn.textContent = '決済して予約を確定する';
+                    } else if (this.value === 'convenience') {
+                        confirmBtn.textContent = '予約確定（コンビニ決済）';
+                    } else {
+                        confirmBtn.textContent = '予約を確定する';
+                    }
+                });
+            });
+            
+            // 初期状態で最初の決済方法を選択状態にする
+            document.querySelector('.payment-method').classList.add('selected');
+            
+            // 利用規約同意チェックボックスの監視
+            document.getElementById('termsAgreement').addEventListener('change', function() {
+                const confirmBtn = document.getElementById('confirmBookingBtn');
+                confirmBtn.disabled = !this.checked;
+                
+                if (this.checked) {
+                    confirmBtn.classList.remove('disabled');
+                } else {
+                    confirmBtn.classList.add('disabled');
+                }
+            });
+            
+            // 初期状態で確認ボタンを無効化
+            document.getElementById('confirmBookingBtn').disabled = true;
+            document.getElementById('confirmBookingBtn').classList.add('disabled');
+        });
+        
+        function confirmBooking() {
+            const termsAgreed = document.getElementById('termsAgreement').checked;
+            const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+            
+            if (!termsAgreed) {
+                alert('利用規約への同意が必要です');
+                return;
+            }
+            
+            // 予約確定処理（模擬）
+            const confirmBtn = document.getElementById('confirmBookingBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '処理中...';
+            
+            // 決済方法に応じた処理の模擬
+            setTimeout(() => {
+                if (selectedPayment === 'credit') {
+                    // クレジットカード決済の模擬
+                    alert('クレジットカード決済を開始します（模擬）');
+                } else if (selectedPayment === 'convenience') {
+                    // コンビニ決済の模擬
+                    alert('コンビニ決済用の番号を発行します（模擬）');
+                }
+                
+                // 完了ページへ遷移
+                window.location.href = 'booking-complete.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

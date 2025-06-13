@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "田中太郎",
+      "email": "tanaka@example.com",
+      "phone": "090-1234-5678",
+      "address": "東京都千代田区千代田1-1-1",
+      "registeredAt": "2023-12-01"
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "userId": 1,
+      "facilityId": 1,
+      "date": "2024-01-15",
+      "timeSlots": ["10:00", "11:00"],
+      "purpose": "個人利用",
+      "participants": 4,
+      "equipment": ["バスケットボール"],
+      "totalPrice": 4000,
+      "status": "confirmed",
+      "bookedAt": "2024-01-10"
+    }
+  ]
+}

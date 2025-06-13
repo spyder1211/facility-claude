@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予約完了 - 体育施設予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .complete-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+            animation: checkmark 0.6s ease-in-out;
+        }
+        
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .complete-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .complete-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        
+        .booking-id {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-align: center;
+            margin: 1rem 0;
+            border: 2px dashed var(--primary-color);
+        }
+        
+        .booking-details {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: var(--neutral-color);
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        .next-steps {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .next-steps h4 {
+            color: #0369a1;
+            margin-bottom: 1rem;
+        }
+        
+        .next-steps ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .next-steps li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #bae6fd;
+        }
+        
+        .next-steps li:last-child {
+            border-bottom: none;
+        }
+        
+        .next-steps li:before {
+            content: "✓ ";
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-buttons .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        
+        .contact-info {
+            background: #fff7ed;
+            border: 1px solid #fb923c;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .contact-info h4 {
+            color: #ea580c;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-info p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-info p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .step-separator {
+            width: 60px;
+            height: 2px;
+            background: var(--secondary-color);
+            margin: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏃‍♂️ スポーツ施設予約</a>
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="facilities.html">施設一覧</a>
+                    <a href="mypage.html" class="login-btn">マイページ</a>
+                </nav>
+                <button class="mobile-menu-toggle">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a>
+                <span class="breadcrumb-separator">></span>
+                <a href="facilities.html">施設一覧</a>
+                <span class="breadcrumb-separator">></span>
+                <span>予約完了</span>
+            </nav>
+
+            <!-- ステップインジケーター -->
+            <div class="step-indicator">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <span>施設選択</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <span>予約内容</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <span>確認・決済</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <span>完了</span>
+                </div>
+            </div>
+
+            <div class="complete-container">
+                <!-- 成功アイコン -->
+                <div class="success-icon">
+                    ✓
+                </div>
+                
+                <h1 style="color: var(--secondary-color); margin-bottom: 1rem;">予約が完了しました！</h1>
+                <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                    ご予約ありがとうございます。<br>
+                    予約確認メールをお送りしましたので、ご確認ください。
+                </p>
+
+                <!-- 予約番号 -->
+                <div class="complete-section">
+                    <h3>📝 予約番号</h3>
+                    <div class="booking-id" id="bookingId">
+                        BK1234567890
+                    </div>
+                    <p style="text-align: center; font-size: 0.9rem; color: var(--neutral-color);">
+                        ※この番号は施設利用時に必要です。スクリーンショット等で保存してください。
+                    </p>
+                </div>
+
+                <!-- 予約詳細 -->
+                <div class="complete-section">
+                    <h3>📋 予約詳細</h3>
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <span class="detail-label">施設名:</span>
+                            <span class="detail-value">市民体育館</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">利用日:</span>
+                            <span class="detail-value">2024年1月15日（月）</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">利用時間:</span>
+                            <span class="detail-value">10:00-12:00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">参加人数:</span>
+                            <span class="detail-value">4名</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">合計金額:</span>
+                            <span class="detail-value" style="color: var(--primary-color); font-size: 1.1rem;">¥4,730</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">決済方法:</span>
+                            <span class="detail-value">クレジットカード</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 次のステップ -->
+                <div class="next-steps">
+                    <h4>🚀 利用当日までの流れ</h4>
+                    <ul>
+                        <li>予約確認メールが届きます（5分以内）</li>
+                        <li>利用日の前日にリマインダーメールをお送りします</li>
+                        <li>当日は予約番号をお持ちの上、施設受付にお越しください</li>
+                        <li>身分証明書をご持参ください</li>
+                        <li>利用開始時刻の15分前から受付可能です</li>
+                    </ul>
+                </div>
+
+                <!-- お問い合わせ -->
+                <div class="contact-info">
+                    <h4>📞 お問い合わせ</h4>
+                    <p><strong>施設への直接連絡:</strong> 03-1234-5678</p>
+                    <p><strong>予約システムサポート:</strong> support@sports-booking.city</p>
+                    <p><strong>緊急時（当日）:</strong> 090-xxxx-xxxx</p>
+                </div>
+
+                <!-- アクションボタン -->
+                <div class="action-buttons">
+                    <a href="mypage.html" class="btn btn-primary">マイページで確認</a>
+                    <a href="index.html" class="btn btn-outline">トップページに戻る</a>
+                </div>
+
+                <!-- 追加情報 -->
+                <div style="margin-top: 2rem; padding: 1rem; background: var(--light-gray); border-radius: 0.5rem;">
+                    <h4 style="margin-bottom: 1rem;">📝 ご確認事項</h4>
+                    <ul style="text-align: left; font-size: 0.9rem; color: var(--neutral-color);">
+                        <li>キャンセルは利用日の3日前まで無料です</li>
+                        <li>変更・キャンセルはマイページから行えます</li>
+                        <li>天候等による施設都合での中止の場合は全額返金いたします</li>
+                        <li>利用規約に同意いただいた内容での予約となります</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>サービス案内</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="facilities.html">施設一覧</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">料金表</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">利用規約</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p>📞 03-1234-5678</p>
+                    <p>📧 info@sports-booking.city</p>
+                    <p>📍 〒100-0001<br>東京都千代田区千代田1-1-1</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>営業時間</h3>
+                    <p><strong>システム:</strong> 24時間利用可能</p>
+                    <p><strong>電話受付:</strong><br>平日 9:00-17:00</p>
+                    <p><strong>施設利用:</strong><br>各施設により異なります</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 体育施設予約システム. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 3秒後に自動的に紙吹雪エフェクトを表示（お祝い演出）
+            setTimeout(() => {
+                showCelebration();
+            }, 1000);
+        });
+        
+        function showCelebration() {
+            // 簡易的な紙吹雪エフェクト
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createConfetti();
+                }, i * 50);
+            }
+        }
+        
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.top = '-10px';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7'][Math.floor(Math.random() * 5)];
+            confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            confetti.style.pointerEvents = 'none';
+            confetti.style.zIndex = '9999';
+            confetti.style.animation = 'fall 3s linear forwards';
+            
+            // CSS animation for falling effect
+            if (!document.getElementById('confetti-style')) {
+                const style = document.createElement('style');
+                style.id = 'confetti-style';
+                style.textContent = `
+                    @keyframes fall {
+                        to {
+                            transform: translateY(100vh) rotate(720deg);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            document.body.appendChild(confetti);
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                if (confetti.parentNode) {
+                    confetti.parentNode.removeChild(confetti);
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

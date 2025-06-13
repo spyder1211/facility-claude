@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイページ - 体育施設予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .mypage-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mypage-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            min-height: 600px;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .user-info {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-card {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--neutral-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .booking-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .booking-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .booking-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .booking-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .booking-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .booking-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .booking-detail-icon {
+            color: var(--primary-color);
+        }
+        
+        .booking-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+        
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quick-action {
+            background: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.3s;
+        }
+        
+        .quick-action:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .quick-action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--neutral-color);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                gap: 0.5rem;
+                padding-bottom: 1rem;
+            }
+            
+            .sidebar-menu li {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+            
+            .booking-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .booking-actions {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏃‍♂️ スポーツ施設予約</a>
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="facilities.html">施設一覧</a>
+                    <a href="mypage.html" class="login-btn">田中太郎さん</a>
+                </nav>
+                <button class="mobile-menu-toggle">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a>
+                <span class="breadcrumb-separator">></span>
+                <span>マイページ</span>
+            </nav>
+
+            <h1>マイページ</h1>
+
+            <div class="mypage-container">
+                <!-- サイドバー -->
+                <div class="sidebar">
+                    <h3>メニュー</h3>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="menu-item active" data-section="dashboard">ダッシュボード</a></li>
+                        <li><a href="#" class="menu-item" data-section="bookings">予約履歴</a></li>
+                        <li><a href="#" class="menu-item" data-section="profile">プロフィール</a></li>
+                        <li><a href="#" class="menu-item" data-section="settings">設定</a></li>
+                        <li><a href="#" onclick="logout()">ログアウト</a></li>
+                    </ul>
+                </div>
+
+                <!-- メインコンテンツ -->
+                <div class="main-content">
+                    <!-- ダッシュボード -->
+                    <div class="content-section active" id="dashboard">
+                        <h2>ダッシュボード</h2>
+                        <p class="text-muted mb-3">田中太郎さん、こんにちは！</p>
+
+                        <!-- 統計情報 -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">総利用回数</div>
+                            </div>
+                            <div class="stat-card" style="background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">今月の予約</div>
+                            </div>
+                            <div class="stat-card" style="background: linear-gradient(135deg, var(--accent-color), #e11d48);">
+                                <div class="stat-value">¥24,500</div>
+                                <div class="stat-label">総利用金額</div>
+                            </div>
+                        </div>
+
+                        <!-- クイックアクション -->
+                        <h3>クイックアクション</h3>
+                        <div class="quick-actions">
+                            <a href="facilities.html" class="quick-action">
+                                <div class="quick-action-icon">🏢</div>
+                                <div>施設を予約</div>
+                            </a>
+                            <a href="#" class="quick-action" onclick="showSection('bookings')">
+                                <div class="quick-action-icon">📅</div>
+                                <div>予約履歴</div>
+                            </a>
+                            <a href="#" class="quick-action" onclick="showSection('profile')">
+                                <div class="quick-action-icon">👤</div>
+                                <div>プロフィール編集</div>
+                            </a>
+                            <a href="#" class="quick-action" onclick="alert('準備中です')">
+                                <div class="quick-action-icon">💰</div>
+                                <div>料金履歴</div>
+                            </a>
+                        </div>
+
+                        <!-- 直近の予約 -->
+                        <h3>直近の予約</h3>
+                        <div class="booking-card">
+                            <div class="booking-header">
+                                <div class="booking-title">市民体育館</div>
+                                <div class="booking-status status-confirmed">予約確定</div>
+                            </div>
+                            <div class="booking-details">
+                                <div class="booking-detail">
+                                    <span class="booking-detail-icon">📅</span>
+                                    <span>2024年1月15日（月）</span>
+                                </div>
+                                <div class="booking-detail">
+                                    <span class="booking-detail-icon">🕐</span>
+                                    <span>10:00-12:00</span>
+                                </div>
+                                <div class="booking-detail">
+                                    <span class="booking-detail-icon">👥</span>
+                                    <span>4名</span>
+                                </div>
+                                <div class="booking-detail">
+                                    <span class="booking-detail-icon">💰</span>
+                                    <span>¥4,730</span>
+                                </div>
+                            </div>
+                            <div class="booking-actions">
+                                <button class="btn btn-outline btn-small" onclick="alert('変更機能は準備中です')">変更</button>
+                                <button class="btn btn-outline btn-small" onclick="confirmCancel()">キャンセル</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 予約履歴 -->
+                    <div class="content-section" id="bookings">
+                        <h2>予約履歴</h2>
+                        
+                        <!-- フィルター -->
+                        <div class="filter-bar" style="margin-bottom: 2rem;">
+                            <div class="filter-row">
+                                <div class="form-group">
+                                    <label for="statusFilter" class="form-label">ステータス</label>
+                                    <select id="statusFilter" class="form-select">
+                                        <option value="">すべて</option>
+                                        <option value="confirmed">予約確定</option>
+                                        <option value="pending">支払い待ち</option>
+                                        <option value="cancelled">キャンセル済み</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="periodFilter" class="form-label">期間</label>
+                                    <select id="periodFilter" class="form-select">
+                                        <option value="">すべて</option>
+                                        <option value="this-month">今月</option>
+                                        <option value="last-month">先月</option>
+                                        <option value="this-year">今年</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 予約リスト -->
+                        <div id="bookingList">
+                            <div class="booking-card">
+                                <div class="booking-header">
+                                    <div class="booking-title">市民体育館</div>
+                                    <div class="booking-status status-confirmed">予約確定</div>
+                                </div>
+                                <div class="booking-details">
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">📅</span>
+                                        <span>2024年1月15日（月）</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">🕐</span>
+                                        <span>10:00-12:00</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">👥</span>
+                                        <span>4名</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">💰</span>
+                                        <span>¥4,730</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">🆔</span>
+                                        <span>BK1234567890</span>
+                                    </div>
+                                </div>
+                                <div class="booking-actions">
+                                    <button class="btn btn-outline btn-small" onclick="alert('変更機能は準備中です')">変更</button>
+                                    <button class="btn btn-outline btn-small" onclick="confirmCancel()">キャンセル</button>
+                                    <button class="btn btn-outline btn-small" onclick="alert('詳細画面は準備中です')">詳細</button>
+                                </div>
+                            </div>
+
+                            <div class="booking-card">
+                                <div class="booking-header">
+                                    <div class="booking-title">テニスコートA</div>
+                                    <div class="booking-status status-cancelled">キャンセル済み</div>
+                                </div>
+                                <div class="booking-details">
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">📅</span>
+                                        <span>2023年12月28日（木）</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">🕐</span>
+                                        <span>14:00-16:00</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">👥</span>
+                                        <span>2名</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">💰</span>
+                                        <span>¥3,600（返金済み）</span>
+                                    </div>
+                                    <div class="booking-detail">
+                                        <span class="booking-detail-icon">🆔</span>
+                                        <span>BK1234567889</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- プロフィール -->
+                    <div class="content-section" id="profile">
+                        <h2>プロフィール</h2>
+                        
+                        <form id="profileForm" style="max-width: 600px;">
+                            <div class="grid grid-2">
+                                <div class="form-group">
+                                    <label for="lastName" class="form-label">姓</label>
+                                    <input type="text" id="lastName" class="form-input" value="田中">
+                                </div>
+                                <div class="form-group">
+                                    <label for="firstName" class="form-label">名</label>
+                                    <input type="text" id="firstName" class="form-input" value="太郎">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" id="email" class="form-input" value="tanaka@example.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone" class="form-label">電話番号</label>
+                                <input type="tel" id="phone" class="form-input" value="090-1234-5678">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address" class="form-label">住所</label>
+                                <input type="text" id="address" class="form-input" value="東京都千代田区千代田1-1-1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="birthDate" class="form-label">生年月日</label>
+                                <input type="date" id="birthDate" class="form-input" value="1990-01-01">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notifications" class="form-label">通知設定</label>
+                                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox" checked>
+                                        <span>予約確認メール</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox" checked>
+                                        <span>リマインダーメール</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox">
+                                        <span>新施設情報</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">変更を保存</button>
+                        </form>
+                    </div>
+
+                    <!-- 設定 -->
+                    <div class="content-section" id="settings">
+                        <h2>設定</h2>
+                        
+                        <div style="max-width: 600px;">
+                            <div class="info-card">
+                                <h4 style="margin-bottom: 1rem;">パスワード変更</h4>
+                                <form id="passwordForm">
+                                    <div class="form-group">
+                                        <label for="currentPassword" class="form-label">現在のパスワード</label>
+                                        <input type="password" id="currentPassword" class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newPassword" class="form-label">新しいパスワード</label>
+                                        <input type="password" id="newPassword" class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirmPassword" class="form-label">新しいパスワード（確認）</label>
+                                        <input type="password" id="confirmPassword" class="form-input">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">パスワードを変更</button>
+                                </form>
+                            </div>
+                            
+                            <div class="info-card" style="margin-top: 2rem;">
+                                <h4 style="margin-bottom: 1rem;">アカウント管理</h4>
+                                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                    <button class="btn btn-outline" onclick="alert('データエクスポート機能は準備中です')">データエクスポート</button>
+                                    <button class="btn btn-outline" onclick="confirmDeleteAccount()" style="color: #dc2626; border-color: #dc2626;">アカウント削除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>サービス案内</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="facilities.html">施設一覧</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">料金表</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">利用規約</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p>📞 03-1234-5678</p>
+                    <p>📧 info@sports-booking.city</p>
+                    <p>📍 〒100-0001<br>東京都千代田区千代田1-1-1</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>営業時間</h3>
+                    <p><strong>システム:</strong> 24時間利用可能</p>
+                    <p><strong>電話受付:</strong><br>平日 9:00-17:00</p>
+                    <p><strong>施設利用:</strong><br>各施設により異なります</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 体育施設予約システム. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // サイドメニューの処理
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+                    
+                    // アクティブ状態の更新
+                    document.querySelectorAll('.menu-item').forEach(menu => menu.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // フォーム送信処理
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('プロフィールを更新しました（模擬）');
+            });
+            
+            document.getElementById('passwordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (newPassword !== confirmPassword) {
+                    alert('パスワードが一致しません');
+                    return;
+                }
+                
+                alert('パスワードを変更しました（模擬）');
+                this.reset();
+            });
+        });
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        function confirmCancel() {
+            if (confirm('予約をキャンセルしますか？キャンセル料が発生する場合があります。')) {
+                alert('キャンセル処理を開始しました（模擬）');
+            }
+        }
+        
+        function confirmDeleteAccount() {
+            if (confirm('アカウントを削除すると、すべてのデータが失われます。本当に削除しますか？')) {
+                if (confirm('この操作は取り消せません。本当に削除しますか？')) {
+                    alert('アカウント削除処理を開始しました（模擬）');
+                }
+            }
+        }
+        
+        function logout() {
+            if (confirm('ログアウトしますか？')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>

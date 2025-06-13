@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予約申込み - 体育施設予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .booking-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .booking-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .booking-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .booking-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .selected-info {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .selected-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .selected-info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .price-summary {
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .price-item:last-child {
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .equipment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .equipment-item:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .equipment-item input[type="checkbox"]:checked + label {
+            color: var(--primary-color);
+        }
+        
+        .purpose-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .purpose-option {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .purpose-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .purpose-option.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .step.active .step-number {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .step:not(.active):not(.completed) .step-number {
+            background: var(--light-gray);
+            color: var(--neutral-color);
+        }
+        
+        .step-separator {
+            width: 60px;
+            height: 2px;
+            background: var(--border-color);
+            margin: 0 1rem;
+        }
+        
+        .step.completed + .step .step-separator {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏃‍♂️ スポーツ施設予約</a>
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="facilities.html">施設一覧</a>
+                    <a href="login.html" class="login-btn">ログイン</a>
+                </nav>
+                <button class="mobile-menu-toggle">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- パンくずリスト -->
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a>
+                <span class="breadcrumb-separator">></span>
+                <a href="facilities.html">施設一覧</a>
+                <span class="breadcrumb-separator">></span>
+                <a href="#" onclick="history.back()">施設詳細</a>
+                <span class="breadcrumb-separator">></span>
+                <span>予約申込み</span>
+            </nav>
+
+            <!-- ステップインジケーター -->
+            <div class="step-indicator">
+                <div class="step completed">
+                    <div class="step-number">1</div>
+                    <span>施設選択</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step active">
+                    <div class="step-number">2</div>
+                    <span>予約内容</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <span>確認・決済</span>
+                </div>
+                <div class="step-separator"></div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <span>完了</span>
+                </div>
+            </div>
+
+            <h1>予約申込み</h1>
+
+            <div class="booking-container">
+                <div>
+                    <!-- 選択済み情報 -->
+                    <div class="booking-section">
+                        <h3>選択済み情報</h3>
+                        <div class="selected-info">
+                            <div class="selected-info-item">
+                                <span>施設名:</span>
+                                <span id="selectedFacility">-</span>
+                            </div>
+                            <div class="selected-info-item">
+                                <span>利用日:</span>
+                                <span id="selectedDate">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="bookingForm">
+                        <!-- 時間帯選択 -->
+                        <div class="booking-section">
+                            <h3>時間帯選択</h3>
+                            <p class="text-muted mb-2">利用したい時間帯を選択してください（複数選択可）</p>
+                            <div id="timeSlots" class="time-slots">
+                                <!-- JavaScriptで動的に生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 利用目的 -->
+                        <div class="booking-section">
+                            <h3>利用目的</h3>
+                            <div class="purpose-options">
+                                <div class="purpose-option" data-purpose="個人利用">個人利用</div>
+                                <div class="purpose-option" data-purpose="団体利用">団体利用</div>
+                                <div class="purpose-option" data-purpose="大会・イベント">大会・イベント</div>
+                                <div class="purpose-option" data-purpose="練習">練習</div>
+                            </div>
+                        </div>
+
+                        <!-- 利用人数 -->
+                        <div class="booking-section">
+                            <h3>利用人数</h3>
+                            <div class="form-group">
+                                <label for="participants" class="form-label">参加人数</label>
+                                <input type="number" id="participants" class="form-input" min="1" max="100" value="1" required>
+                                <small class="text-muted">※最大収容人数: <span id="maxCapacity">-</span>名</small>
+                            </div>
+                        </div>
+
+                        <!-- 備品レンタル -->
+                        <div class="booking-section">
+                            <h3>備品レンタル（オプション）</h3>
+                            <div class="equipment-grid" id="equipmentOptions">
+                                <!-- JavaScriptで動的に生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 利用者情報 -->
+                        <div class="booking-section">
+                            <h3>利用者情報</h3>
+                            <div class="grid grid-2">
+                                <div class="form-group">
+                                    <label for="userName" class="form-label">代表者名</label>
+                                    <input type="text" id="userName" class="form-input" value="田中太郎" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="userPhone" class="form-label">電話番号</label>
+                                    <input type="tel" id="userPhone" class="form-input" value="090-1234-5678" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userEmail" class="form-label">メールアドレス</label>
+                                <input type="email" id="userEmail" class="form-input" value="tanaka@example.com" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="remarks" class="form-label">備考・特記事項</label>
+                                <textarea id="remarks" class="form-input" rows="3" placeholder="ご要望やご質問がございましたらご記入ください"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="text-center" style="margin-top: 2rem;">
+                            <button type="button" onclick="history.back()" class="btn btn-outline" style="margin-right: 1rem;">戻る</button>
+                            <button type="submit" class="btn btn-primary">予約内容を確認する</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 料金計算 -->
+                <div>
+                    <div class="booking-section price-summary">
+                        <h3>料金計算</h3>
+                        
+                        <div class="price-item">
+                            <span>基本料金:</span>
+                            <span id="basePrice">¥0</span>
+                        </div>
+                        
+                        <div class="price-item">
+                            <span>時間帯料金:</span>
+                            <span id="timePrice">¥0</span>
+                        </div>
+                        
+                        <div class="price-item">
+                            <span>備品レンタル:</span>
+                            <span id="equipmentPrice">¥0</span>
+                        </div>
+                        
+                        <div class="price-item">
+                            <span>小計:</span>
+                            <span id="subtotal">¥0</span>
+                        </div>
+                        
+                        <div class="price-item">
+                            <span>税額（10%）:</span>
+                            <span id="tax">¥0</span>
+                        </div>
+                        
+                        <div class="price-item">
+                            <span>合計:</span>
+                            <span id="totalPrice">¥0</span>
+                        </div>
+                        
+                        <div style="margin-top: 1rem; padding: 1rem; background: var(--light-gray); border-radius: 0.5rem; font-size: 0.9rem; color: var(--neutral-color);">
+                            <strong>キャンセルポリシー:</strong><br>
+                            • 3日前まで: 無料<br>
+                            • 前日まで: 50%<br>
+                            • 当日: 100%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>サービス案内</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="facilities.html">施設一覧</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">料金表</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">利用規約</a></li>
+                        <li><a href="#" onclick="alert('準備中です')">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p>📞 03-1234-5678</p>
+                    <p>📧 info@sports-booking.city</p>
+                    <p>📍 〒100-0001<br>東京都千代田区千代田1-1-1</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>営業時間</h3>
+                    <p><strong>システム:</strong> 24時間利用可能</p>
+                    <p><strong>電話受付:</strong><br>平日 9:00-17:00</p>
+                    <p><strong>施設利用:</strong><br>各施設により異なります</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 体育施設予約システム. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // URLパラメータから情報を取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const facilityId = urlParams.get('facilityId');
+            const date = urlParams.get('date');
+            
+            if (!facilityId || !date) {
+                alert('予約情報が不正です');
+                window.location.href = 'facilities.html';
+                return;
+            }
+            
+            // 選択済み情報を表示
+            document.getElementById('selectedDate').textContent = formatDate(date);
+            
+            // 施設情報を取得して表示
+            setTimeout(() => {
+                const facilityApp = window.facilityApp;
+                if (facilityApp && facilityApp.facilities) {
+                    const facility = facilityApp.facilities.find(f => f.id == facilityId);
+                    if (facility) {
+                        document.getElementById('selectedFacility').textContent = facility.name;
+                        document.getElementById('maxCapacity').textContent = facility.capacity;
+                        
+                        // 備品オプションを生成
+                        const equipmentContainer = document.getElementById('equipmentOptions');
+                        facility.equipment.forEach((equipment, index) => {
+                            const equipmentDiv = document.createElement('div');
+                            equipmentDiv.className = 'equipment-item';
+                            equipmentDiv.innerHTML = `
+                                <input type="checkbox" id="equipment_${index}" name="equipment" value="${equipment}">
+                                <label for="equipment_${index}">${equipment} (+¥300)</label>
+                            `;
+                            equipmentContainer.appendChild(equipmentDiv);
+                            
+                            // チェックボックスの変更を監視
+                            equipmentDiv.querySelector('input').addEventListener('change', updatePriceCalculation);
+                        });
+                        
+                        // 基本料金を設定
+                        updatePriceCalculation();
+                    }
+                }
+            }, 200);
+            
+            // 利用目的の選択
+            document.querySelectorAll('.purpose-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.purpose-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // 参加人数の変更を監視
+            document.getElementById('participants').addEventListener('input', updatePriceCalculation);
+        });
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return new Intl.DateTimeFormat('ja-JP', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            }).format(date);
+        }
+        
+        function updatePriceCalculation() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const facilityId = urlParams.get('facilityId');
+            
+            if (window.facilityApp && window.facilityApp.facilities) {
+                const facility = window.facilityApp.facilities.find(f => f.id == facilityId);
+                if (facility) {
+                    // 選択された時間スロット
+                    const selectedSlots = document.querySelectorAll('.time-slot.selected');
+                    let timePrice = 0;
+                    selectedSlots.forEach(slot => {
+                        const priceMultiplier = parseFloat(slot.dataset.price || 1);
+                        timePrice += facility.basePrice * priceMultiplier;
+                    });
+                    
+                    // 備品レンタル料金
+                    const selectedEquipment = document.querySelectorAll('input[name="equipment"]:checked');
+                    const equipmentPrice = selectedEquipment.length * 300;
+                    
+                    // 料金計算
+                    const subtotal = timePrice + equipmentPrice;
+                    const tax = Math.floor(subtotal * 0.1);
+                    const total = subtotal + tax;
+                    
+                    // 表示更新
+                    document.getElementById('basePrice').textContent = `¥${facility.basePrice.toLocaleString()}`;
+                    document.getElementById('timePrice').textContent = `¥${timePrice.toLocaleString()}`;
+                    document.getElementById('equipmentPrice').textContent = `¥${equipmentPrice.toLocaleString()}`;
+                    document.getElementById('subtotal').textContent = `¥${subtotal.toLocaleString()}`;
+                    document.getElementById('tax').textContent = `¥${tax.toLocaleString()}`;
+                    document.getElementById('totalPrice').textContent = `¥${total.toLocaleString()}`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
